@@ -33,17 +33,69 @@ class Schedule {
     required this.daysRemaining,
   });
 }
+/// Model representing practice statistics
+class PracticeStats {
+  final int totalHours;
+  final int totalMinutes;
+  final int avgDailyHours;
+  final int avgDailyMinutes;
+  final double weekChangePercent;
+  final int practicedDays;
+  final List<List<int>> heatmap; // 7 days x slots
+  final List<int> slotCounts;    // 시간대별 연습 횟수
+  final double goalCompletion;    // 0.0 ~ 1.0
+  final Map<String, double> categoryDistribution; // 이름: 비율
+  final List<String> topSongs;
+  final List<String> topTempos;
 
-/// ViewModel for MainPage (MVVM)
+  PracticeStats({
+    required this.totalHours,
+    required this.totalMinutes,
+    required this.avgDailyHours,
+    required this.avgDailyMinutes,
+    required this.weekChangePercent,
+    required this.practicedDays,
+    required this.heatmap,
+    required this.slotCounts,
+    required this.goalCompletion,
+    required this.categoryDistribution,
+    required this.topSongs,
+    required this.topTempos,
+  });
+}
+
+
+
+/// ViewModel for MainPage and StatsPage
 class MainViewModel extends ChangeNotifier {
-  // BottomNavigationBar 현재 선택 인덱스
   int currentIndex = 0;
 
-  // 연습 시간 데이터 (예시)
+  // Practice time
   int practiceHours = 21;
   int practiceMinutes = 37;
+  PracticeStats stats = PracticeStats(
+    totalHours: 21,
+    totalMinutes: 37,
+    avgDailyHours: 3,
+    avgDailyMinutes: 5,
+    weekChangePercent: 10.0,
+    practicedDays: 6,
+    heatmap: [ // 월-일, 7x7 placeholder
+      [0,1,2,3,4,5,6],
+      [1,0,1,2,3,2,1],
+      [2,1,0,1,2,1,0],
+      [3,2,1,0,1,2,3],
+      [4,3,2,1,0,1,2],
+      [5,4,3,2,1,0,1],
+      [6,5,4,3,2,1,0],
+    ],
+    slotCounts: [1,2,3,4,5,6],
+    goalCompletion: 0.88,
+    categoryDistribution: {'악보': 0.3, '메트로놈': 0.7},
+    topSongs: ['사랑으로', 'Love Ya!', 'Drowning'],
+    topTempos: ['72 bpm', '80 bpm', '90 bpm'],
+  );
 
-  // 주간 인기곡 예시 데이터
   List<PopularSong> weeklySongs = List.generate(
     10,
     (i) => PopularSong(
@@ -53,8 +105,6 @@ class MainViewModel extends ChangeNotifier {
       thumbnailUrl: 'assets/images/song_${i + 1}.png',
     ),
   );
-
-  // 다음 합주 일정 예시
   Schedule nextSchedule = Schedule(
     name: '정기 합주',
     organizer: '멜렐라 팀',
@@ -64,10 +114,8 @@ class MainViewModel extends ChangeNotifier {
     daysRemaining: 0,
   );
 
-  /// BottomNavigationBar 탭 변경 핸들러
   void onTabChanged(int index) {
     currentIndex = index;
-    // TODO: 페이지 네비게이션 로직 구현
     notifyListeners();
   }
 }
