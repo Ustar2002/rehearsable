@@ -5,6 +5,8 @@ import '../viewmodels/main_view_model.dart';
 import 'stats_page.dart';
 
 class MainPage extends StatelessWidget {
+  const MainPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<MainViewModel>();

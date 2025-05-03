@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/main_view_model.dart';
 import 'views/main_page.dart';
+import 'views/loading_page.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: const Color(0xFF121212),
         ),
-        home: MainPage(),
+        home: const LoadingPage(),
       ),
     );
   }

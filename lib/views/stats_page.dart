@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../viewmodels/main_view_model.dart';
 
 class StatsPage extends StatelessWidget {
-  const StatsPage({Key? key}) : super(key: key);
+  const StatsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +231,7 @@ class StatsPage extends StatelessWidget {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
