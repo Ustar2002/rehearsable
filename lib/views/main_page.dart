@@ -2,10 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/main_view_model.dart';
-import 'stats_page.dart';
+import 'metronome_page.dart';
+import 'stats_page.dart'; // StatsPage로 이동하는 PracticeTimeSection에서 사용
 
 class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +20,29 @@ class MainPage extends StatelessWidget {
             _buildAppBar(),
             const Divider(color: Colors.blueAccent, thickness: 2, height: 0),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
+              child: IndexedStack(
+                index: vm.currentIndex,
                 children: [
-                  _WeeklyPopularSection(songs: vm.weeklySongs),
-                  const SizedBox(height: 16),
-                  _PracticeTimeSection(
-                    hours: vm.practiceHours,
-                    minutes: vm.practiceMinutes,
+                  // 0: Dashboard
+                  ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      _WeeklyPopularSection(songs: vm.weeklySongs),
+                      const SizedBox(height: 16),
+                      _PracticeTimeSection(
+                        hours: vm.practiceHours,
+                        minutes: vm.practiceMinutes,
+                      ),
+                      const SizedBox(height: 16),
+                      _NextScheduleSection(schedule: vm.nextSchedule),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _NextScheduleSection(schedule: vm.nextSchedule),
+                  // 1: Metronome
+                  const MetronomePage(),
+                  // 2: Placeholder for ReservationPage
+                  Container(color: const Color(0xFF121212)),
+                  // 3: Placeholder for ScoresPage
+                  Container(color: const Color(0xFF121212)),
                 ],
               ),
             ),
@@ -54,7 +67,7 @@ class MainPage extends StatelessWidget {
   }
 }
 
-// AppBar 부분 분리
+// AppBar 분리
 Widget _buildAppBar() => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
