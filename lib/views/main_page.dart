@@ -1,6 +1,7 @@
 // lib/views/main_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rehearsable/views/scores_page.dart';
 import '../viewmodels/main_view_model.dart';
 import 'metronome_page.dart';
 import 'stats_page.dart'; // StatsPage로 이동하는 PracticeTimeSection에서 사용
@@ -42,7 +43,7 @@ class MainPage extends StatelessWidget {
                   // 2: Placeholder for ReservationPage
                   Container(color: const Color(0xFF121212)),
                   // 3: Placeholder for ScoresPage
-                  Container(color: const Color(0xFF121212)),
+                  const ScoresPage(),
                 ],
               ),
             ),
