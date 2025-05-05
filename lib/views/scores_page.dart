@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/main_view_model.dart';
+import 'score_request_page.dart'; 
+
 
 class ScoresPage extends StatelessWidget {
   const ScoresPage({Key? key}) : super(key: key);
@@ -185,7 +187,9 @@ class ScoresPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8)),
                         ),
                         onPressed: () {
-                          // TODO: 악보 요청하기
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const ScoreRequestPage()),
+                          );
                         },
                         child: const Text('악보 요청하기'),
                       ),
