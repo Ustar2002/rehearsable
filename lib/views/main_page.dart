@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rehearsable/views/scores_page.dart';
 import '../viewmodels/main_view_model.dart';
 import 'metronome_page.dart';
+import 'reservation_page.dart';
 import 'stats_page.dart'; // StatsPage로 이동하는 PracticeTimeSection에서 사용
 
 class MainPage extends StatelessWidget {
@@ -41,7 +42,7 @@ class MainPage extends StatelessWidget {
                   // 1: Metronome
                   const MetronomePage(),
                   // 2: Placeholder for ReservationPage
-                  Container(color: const Color(0xFF121212)),
+                  const ReservationPage(),
                   // 3: Placeholder for ScoresPage
                   const ScoresPage(),
                 ],
