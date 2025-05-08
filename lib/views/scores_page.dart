@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/main_view_model.dart';
-import 'score_request_page.dart'; 
-
+import 'score_request_page.dart';
+import 'score_search_page.dart';
 
 class ScoresPage extends StatelessWidget {
   const ScoresPage({Key? key}) : super(key: key);
@@ -19,9 +19,7 @@ class ScoresPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─────────────────────────────────────────
           // 1) 주간 인기 악보
-          //TODO:패딩 간격 넣기기
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFF1E1E1E),
@@ -31,7 +29,6 @@ class ScoresPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 헤더
                 const Text(
                   '주간 인기 악보',
                   style: TextStyle(
@@ -40,10 +37,8 @@ class ScoresPage extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                // 날짜 범위
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2A2A2A),
                     borderRadius: BorderRadius.circular(8),
@@ -54,7 +49,6 @@ class ScoresPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // 5×2 리스트
                 Column(
                   children: List.generate(5, (i) {
                     final left = popular[i];
@@ -77,7 +71,6 @@ class ScoresPage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // ─────────────────────────────────────────
           // 2) 최신 악보
           Container(
             decoration: BoxDecoration(
@@ -88,7 +81,6 @@ class ScoresPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 헤더
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
@@ -104,7 +96,6 @@ class ScoresPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                // 리스트 항목
                 Column(
                   children: latest.map((score) {
                     return Container(
@@ -130,17 +121,40 @@ class ScoresPage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  score.title,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 14),
-                                  overflow: TextOverflow.ellipsis,
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => ScoreSearchPage(
+                                          initialQuery: score.title,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    score.title,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                Text(
-                                  score.artist,
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
+                                const SizedBox(height: 2),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => ScoreSearchPage(
+                                          initialQuery: score.artist,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    score.artist,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
@@ -156,7 +170,6 @@ class ScoresPage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // ─────────────────────────────────────────
           // 3) 악보 요청/올리기
           Container(
             decoration: BoxDecoration(
@@ -188,7 +201,8 @@ class ScoresPage extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const ScoreRequestPage()),
+                            MaterialPageRoute(
+                                builder: (_) => const ScoreRequestPage()),
                           );
                         },
                         child: const Text('악보 요청하기'),
@@ -205,7 +219,7 @@ class ScoresPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8)),
                         ),
                         onPressed: () {
-                          // TODO: 악보 올리기
+                          // TODO: 악보 올리기 페이지로 이동
                         },
                         child: const Text('악보 올리기'),
                       ),
@@ -239,8 +253,7 @@ class _ScoreItem extends StatelessWidget {
           children: [
             Text(
               '${score.rank}.',
-              style: const TextStyle(
-                  color: Colors.blueAccent, fontSize: 14),
+              style: const TextStyle(color: Colors.blueAccent, fontSize: 14),
             ),
             const SizedBox(width: 4),
             ClipRRect(
@@ -257,17 +270,40 @@ class _ScoreItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    score.title,
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ScoreSearchPage(
+                            initialQuery: score.title,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      score.title,
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Text(
-                    score.artist,
-                    style: const TextStyle(
-                        color: Colors.grey, fontSize: 10),
-                    overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 2),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ScoreSearchPage(
+                            initialQuery: score.artist,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      score.artist,
+                      style:
+                          const TextStyle(color: Colors.grey, fontSize: 10),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
