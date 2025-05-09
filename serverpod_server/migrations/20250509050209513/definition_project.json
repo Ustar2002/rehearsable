@@ -1,0 +1,11 @@
+{
+  "moduleName": "rehearsable_backend",
+  "tables": [],
+  "installedModules": [
+    {
+      "module": "serverpod",
+      "version": "20240516151843329"
+    }
+  ],
+  "migrationApiVersion": 1
+}

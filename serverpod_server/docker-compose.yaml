@@ -1,0 +1,44 @@
+services:
+  # Development services
+  postgres:
+    image: postgres:16.3
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: rehearsable_backend
+      POSTGRES_PASSWORD: "cD2M613Gif_ytORfp9sBFuFtC4KGRD5w"
+    volumes:
+      - rehearsable_backend_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "8091:6379"
+    command: redis-server --requirepass "fcIvXhPc5u_1YxbDXzhEvNHUd8L8sM8T"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Test services
+  postgres_test:
+    image: postgres:16.3
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: rehearsable_backend_test
+      POSTGRES_PASSWORD: "yCvCrAjKujLcG7WHJd34LFk8cWU0Hxuc"
+    volumes:
+      - rehearsable_backend_test_data:/var/lib/postgresql/data
+
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - "9091:6379"
+    command: redis-server --requirepass "8rEPQ5LyEGF5IahRo0dVE69Z2usmcpZ_"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+volumes:
+  rehearsable_backend_data:
+  rehearsable_backend_test_data:
