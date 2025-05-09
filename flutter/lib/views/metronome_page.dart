@@ -1,4 +1,6 @@
 // lib/views/metronome_page.dart
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +34,27 @@ class MetronomePage extends StatelessWidget {
                     },
                   ),
                 ),
+
+                const SizedBox(height: 8),
+
+                // 박자 / 분할 선택 버튼
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.filter_list, color: Colors.white),
+                      onPressed: () => _showTimeSignatureSheet(context, vm),
+                      tooltip: '박자 선택',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.multitrack_audio, color: Colors.white),
+                      onPressed: () => _showSubdivisionSheet(context, vm),
+                      tooltip: '분할 선택',
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
 
                 // 비트 인디케이터
                 Row(
@@ -135,7 +158,7 @@ class MetronomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // BPM 표시 & 박자 표시
+                // BPM 표시 & 박자(박자 표시는 이미 상단 시그니처에서 선택 가능)
                 Card(
                   color: const Color(0xFF1E1E1E),
                   shape: RoundedRectangleBorder(
@@ -160,28 +183,6 @@ class MetronomePage extends StatelessWidget {
                             const SizedBox(width: 4),
                             const Text('BPM',
                                 style: TextStyle(color: Colors.grey)),
-                          ],
-                        ),
-                        const Divider(color: Colors.grey),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                                icon: const Icon(Icons.filter_1,
-                                    color: Colors.white),
-                                onPressed: () => vm.changeBeatCount(1)),
-                            IconButton(
-                                icon: const Icon(Icons.filter_2,
-                                    color: Colors.white),
-                                onPressed: () => vm.changeBeatCount(2)),
-                            IconButton(
-                                icon: const Icon(Icons.filter_3,
-                                    color: Colors.white),
-                                onPressed: () => vm.changeBeatCount(3)),
-                            IconButton(
-                                icon: const Icon(Icons.filter_4,
-                                    color: Colors.white),
-                                onPressed: () => vm.changeBeatCount(4)),
                           ],
                         ),
                       ],
@@ -224,12 +225,83 @@ class MetronomePage extends StatelessWidget {
     );
   }
 
+  // --- 시그니처 선택 시트 ---
+  void _showTimeSignatureSheet(BuildContext context, MetronomeViewModel vm) {
+    final signatures = [
+      '1/2','2/2','3/2','4/2','5/2','6/2','7/2','8/2','9/2','10/2','11/2','12/2','13/2',
+      '1/4','2/4','3/4','4/4','5/4','6/4','7/4','8/4','9/4','10/4','11/4','12/4','13/4',
+      '3/8','6/8','9/8','12/8',
+      '5/8(3+2)','5/8(2+3)',
+      '7/8(3+2+2)','7/8(2+3+2)','7/8(2+2+3)'
+    ];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.black54,
+      builder: (_) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 8, runSpacing: 8,
+            children: signatures.map((sig) {
+              final count = int.tryParse(sig.split('/')[0]) ?? vm.beatCount;
+              return ChoiceChip(
+                label: Text(sig, style: const TextStyle(color: Colors.white)),
+                selected: vm.beatCount == count,
+                onSelected: (_) {
+                  vm.changeBeatCount(count);
+                  Navigator.pop(context);
+                },
+                selectedColor: Colors.blueAccent,
+                backgroundColor: const Color(0xFF2A2A2A),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  // --- 분할(Subdivision) 선택 시트 ---
+  void _showSubdivisionSheet(BuildContext context, MetronomeViewModel vm) {
+    final subs = ['1/4','1/8','1/16','트리플','콰템','콰텟+'];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.black54,
+      builder: (_) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: subs.map((label) {
+              return GestureDetector(
+                onTap: () {
+                  // TODO: vm.changeSubdivision(label);
+                  Navigator.pop(context);
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.music_note, color: Colors.white, size: 28),
+                    const SizedBox(height: 4),
+                    Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
   String _formatDuration(Duration d) {
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$m:$s';
   }
 }
+
 
 /// 전체화면 전용 페이지
 class FullScreenMetronomePage extends StatefulWidget {
@@ -243,7 +315,6 @@ class _FullScreenMetronomePageState extends State<FullScreenMetronomePage> {
   @override
   void initState() {
     super.initState();
-     // 시스템 UI 모두 숨기고(immersive), 가로 고정
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -253,10 +324,9 @@ class _FullScreenMetronomePageState extends State<FullScreenMetronomePage> {
 
   @override
   void dispose() {
-    // 원래 상태(상태바/네비바 보이기)로 복원
     SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.manual,
-    overlays: SystemUiOverlay.values,
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
     );
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -274,11 +344,9 @@ class _FullScreenMetronomePageState extends State<FullScreenMetronomePage> {
           create: (_) => MetronomeViewModel(),
           child: Consumer<MetronomeViewModel>(
             builder: (context, vm, _) {
-              // 풀스크린에 맞춰 UI 간결화
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 대형 비트 인디케이터
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(vm.beatCount, (i) {
@@ -296,7 +364,6 @@ class _FullScreenMetronomePageState extends State<FullScreenMetronomePage> {
                     }),
                   ),
                   const SizedBox(height: 32),
-                  // 대형 BPM
                   Text(
                     '${vm.bpm}',
                     style: const TextStyle(
@@ -305,7 +372,6 @@ class _FullScreenMetronomePageState extends State<FullScreenMetronomePage> {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 32),
-                  // 대형 Play/Stop 버튼
                   GestureDetector(
                     onTap: () {
                       if (vm.isRunning) vm.stop();
@@ -314,8 +380,8 @@ class _FullScreenMetronomePageState extends State<FullScreenMetronomePage> {
                     child: Container(
                       width: 100,
                       height: 100,
-                      decoration: BoxDecoration(
-                          color: Colors.grey[800], shape: BoxShape.circle),
+                      decoration:
+                          BoxDecoration(color: Colors.grey[800], shape: BoxShape.circle),
                       child: Icon(
                         vm.isRunning ? Icons.pause : Icons.play_arrow,
                         color: Colors.white,
